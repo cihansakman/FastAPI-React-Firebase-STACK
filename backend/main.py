@@ -1,6 +1,6 @@
 #in order to run the FastApi -> uvicorn main:app --reload
 #then we can go to /docs panel
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 # an HTTP-specific exception class  to generate exception information
 from fastapi.middleware.cors import CORSMiddleware
 #import neceserray functions for database
@@ -9,6 +9,9 @@ from database import (
     add_item,
     remove_item
 )
+import json
+
+
 app = FastAPI()
 #Allow requests from port 3000 (React front-end)
 origins = [
@@ -37,8 +40,12 @@ async def fetch_all_items():
     raise HTTPException(400, "Something went wrong")
 # When we get a body from the front-end we need to specify the type of that incoming body element.
 @app.post("/api/item")
-async def add_items_to_db_by_query(request_body : dict):
-    query = request_body['query']
+async def add_items_to_db_by_query(request_body : Request):
+
+    request_body = await request_body.body()
+    
+    query = json.loads(request_body)['query']
+    
     response = await add_item(query)
     if response:
         return response
@@ -46,8 +53,10 @@ async def add_items_to_db_by_query(request_body : dict):
 
 # Remove the item from the db
 @app.delete("/api/item")
-async def delete_item_from_db(request_body: dict):
-    title = request_body['title']
+async def delete_item_from_db(request_body: Request):
+    request_body = await request_body.body()
+    print("ULAAAAN", request_body)
+    title = json.loads(request_body)['title']
 
     response = await remove_item(title)
     if response:
