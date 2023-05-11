@@ -25,6 +25,8 @@ def send_query(query):
             item_dict["fat"]= item['fat_total_g']
             item_dict["protein"]=item['protein_g']
             item_dict["serving_size_g"] = item['serving_size_g']
+            item_dict["carbs_g"]=item['carbohydrates_total_g']
+            item_dict["sugar_g"] = item['sugar_g']
             search_array.append(item_dict)
         return search_array
     else:
